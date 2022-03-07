@@ -3,7 +3,9 @@ package config;
 import utils.ReadProperties;
 import utils.SQLReader;
 
-import exceptions.DBException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.List;
 import java.util.Properties;
@@ -11,26 +13,50 @@ import java.util.Properties;
 public class ConfigAmbienteJDBC {
 
     private static Connection con;
-
     //TODO: Adicionar sistema de log
-    public static Connection getConnection(){
-        try{
-            if (con==null){
-                if (ReadProperties.loadProperties()!=null){
+    public static Connection getConnection()
+    {
+
+        try
+        {
+            if (con==null)
+            {
+                InputStreamReader ireader = new InputStreamReader(initContainer()
+                        .getInputStream());
+                BufferedReader buffer = new BufferedReader(ireader);
+                String line;
+                while ((line = buffer.readLine()) != null){
+                    System.out.println(line);
+                }
+                if (ReadProperties.loadProperties()!=null)
+                {
                     Properties prop = ReadProperties.loadProperties();
                     String urlOracle = prop.getProperty("url");
                     con = DriverManager.getConnection(urlOracle, prop);
+                    createInitTables(con);
                 }
             }
-        }catch(SQLException ex){
+        }catch(SQLException | IOException ex)
+        {
             System.err.println(ex.getMessage());
             ex.printStackTrace();
         }
         return con;
     }
 
-    private static void initContainer (){
-        //TODO: Adicionar shell script para executar o container
+    private static Process initContainer (){
+        Process p = null;
+        try{
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("/bin/bash");
+            pb.command("-c");
+            pb.command("docker pull epiclabs/docker-oracle-xe-11g");
+            pb.command("docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e RELAX_SECURITY=1 epiclabs/docker-oracle-xe-11g");
+            p = pb.start();
+        }catch(IOException ex){
+            System.err.println(ex.getMessage());
+        }
+        return p;
     }
 
     private static void createInitTables (Connection con) {
@@ -38,54 +64,48 @@ public class ConfigAmbienteJDBC {
        Statement st = null;
        try {
             st = con.createStatement();
-           Statement finalSt = st;
            for (String consult : consults) {
                try {
-                   finalSt.executeUpdate(consult);
+                   st.executeUpdate(consult);
                } catch (SQLException e) {
                    e.printStackTrace();
                } finally {
-                   closeStatement(finalSt);
+                   closeStatement(st);
                }
            }
-       } catch (SQLException | DBException e) {
+       } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-           try {
-               closeStatement(st);
-           } catch (DBException e) {
-               System.err.println(e.getMessage());
-               e.printStackTrace();
-           }
+           closeStatement(st);
        }
     }
 
-    public static void closeConnection() throws DBException{
+    public static void closeConnection(Connection con){
         if(con!=null){
             try{
                 con.close();
             }catch(SQLException e){
-                throw new DBException("Erro ao carregar arquivo de config.");
+                System.err.println(e.getMessage());
             }
         }
     }
 
-    public static void closeStatement(Statement st) throws DBException {
+    public static void closeStatement(Statement st) {
         if(st!=null){
             try{
                 st.close();
             }catch(SQLException e){
-                throw new DBException("Erro ao tentar encerrar o statement.");
+                System.err.println(e.getMessage());
             }
         }
     }
 
-    public static void closeResultSet(ResultSet rs) throws DBException {
+    public static void closeResultSet(ResultSet rs){
         if(rs!=null){
             try{
                 rs.close();
             }catch(SQLException e){
-                throw new DBException("Erro ao tentar encerrar o result set.");
+                System.err.println(e.getMessage());
             }
         }
     }
