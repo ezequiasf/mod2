@@ -1,18 +1,18 @@
-package dao;
+package repository;
 
 import model.Receita;
 
 import java.util.List;
 
-public class OperacoesReceitaDAO implements GenericDAO<Receita>{
+public class ReceitaRepository implements GenericRepository<Receita> {
 
     @Override
-    public void registrar(Receita receita) {
-
+    public Receita registrar(Receita receita) {
+        return null;
     }
 
     @Override
-    public void atualizar(Receita receita) {
+    public void atualizar(Integer id, Receita receita) {
 
     }
 

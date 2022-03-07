@@ -9,8 +9,7 @@ public class Comentario {
 
     public Comentario (){}
 
-    public Comentario(Integer id_comentario, Integer id_receita, Integer id_usuario, String comentario) {
-        this.id_comentario = id_comentario;
+    public Comentario(Integer id_receita, Integer id_usuario, String comentario) {
         this.id_receita = id_receita;
         this.id_usuario = id_usuario;
         this.comentario = comentario;

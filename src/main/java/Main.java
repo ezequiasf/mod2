@@ -1,5 +1,3 @@
-package exec;
-
 import config.ConfigAmbienteJDBC;
 
 import java.sql.Connection;

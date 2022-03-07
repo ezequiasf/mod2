@@ -1,18 +1,18 @@
-package dao;
+package repository;
 
 import model.Nota;
 
 import java.util.List;
 
-public class OperacoesNotaDAO implements GenericDAO<Nota>{
+public class NotaRepository implements GenericRepository<Nota> {
 
     @Override
-    public void registrar(Nota nota) {
-
+    public Nota registrar(Nota nota) {
+        return null;
     }
 
     @Override
-    public void atualizar(Nota nota) {
+    public void atualizar(Integer id, Nota nota) {
 
     }
 

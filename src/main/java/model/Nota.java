@@ -9,8 +9,7 @@ public class Nota {
 
     public Nota (){}
 
-    public Nota(Integer id_nota, Integer id_receita, Integer id_usuario, Double nota) {
-        this.id_nota = id_nota;
+    public Nota(Integer id_receita, Integer id_usuario, Double nota) {
         this.id_receita = id_receita;
         this.id_usuario = id_usuario;
         this.nota = nota;

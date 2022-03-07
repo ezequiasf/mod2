@@ -1,11 +1,11 @@
-package dao;
+package repository;
 
 import java.util.List;
 
-public interface GenericDAO<Y> {
+public interface GenericRepository<Y> {
 
-    void registrar(Y y);
-    void atualizar(Y y);
+    Y registrar(Y y);
+    void atualizar(Integer id, Y y);
     void deletar(Integer id);
     Y encontrarUm(Integer id);
     List<Y> encontrarTodos();

@@ -16,7 +16,6 @@ public class ConfigAmbienteJDBC {
     //TODO: Adicionar sistema de log
     public static Connection getConnection()
     {
-
         try
         {
             if (con==null)

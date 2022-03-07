@@ -1,18 +1,18 @@
-package dao;
+package repository;
 
 import model.Comentario;
 
 import java.util.List;
 
-public class OperacoesComentarioDAO implements GenericDAO<Comentario>{
+public class ComentarioRepository implements GenericRepository<Comentario> {
 
     @Override
-    public void registrar(Comentario comentario) {
-
+    public Comentario registrar(Comentario comentario) {
+        return null;
     }
 
     @Override
-    public void atualizar(Comentario comentario) {
+    public void atualizar(Integer id, Comentario comentario) {
 
     }
 

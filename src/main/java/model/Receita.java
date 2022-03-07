@@ -16,8 +16,8 @@ public class Receita {
     private Double calorias;
 
     public Receita (){}
-    public Receita(Integer id_usuario, String nomeReceita, TipoReceita tipoReceita, TipoRefeicao tipoRefeicao, Double calorias, Double mediaPreco,
-                   String modoPreparo, Integer tempoPreparo) {
+
+    public Receita(Integer id_usuario, String nomeReceita, TipoReceita tipoReceita, TipoRefeicao tipoRefeicao, String modoPreparo, Integer tempoPreparo, Double mediaPreco, Double calorias) {
         this.id_usuario = id_usuario;
         this.nomeReceita = nomeReceita;
         this.tipoReceita = tipoReceita;
