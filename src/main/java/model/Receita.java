@@ -1,13 +1,12 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
 import utils.TipoReceita;
 import utils.TipoRefeicao;
 
 public class Receita {
 
     private Integer id_receita;
+    private Integer id_usuario;
     private String nomeReceita;
     private TipoReceita tipoReceita;
     private TipoRefeicao tipoRefeicao;
@@ -17,8 +16,9 @@ public class Receita {
     private Double calorias;
 
     public Receita (){}
-    public Receita(String nomeReceita, TipoReceita tipoReceita, TipoRefeicao tipoRefeicao, Double calorias, Double mediaPreco,
-            String modoPreparo, Integer tempoPreparo) {
+
+    public Receita(Integer id_usuario, String nomeReceita, TipoReceita tipoReceita, TipoRefeicao tipoRefeicao, String modoPreparo, Integer tempoPreparo, Double mediaPreco, Double calorias) {
+        this.id_usuario = id_usuario;
         this.nomeReceita = nomeReceita;
         this.tipoReceita = tipoReceita;
         this.tipoRefeicao = tipoRefeicao;
@@ -26,6 +26,14 @@ public class Receita {
         this.tempoPreparo = tempoPreparo;
         this.mediaPreco = mediaPreco;
         this.calorias = calorias;
+    }
+
+    public Integer getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId_usuario(Integer id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public Integer getId_receita() {
