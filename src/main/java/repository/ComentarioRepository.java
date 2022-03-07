@@ -1,7 +1,6 @@
 package repository;
 
 import model.Comentario;
-import model.Usuario;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,7 +1,6 @@
 package repository;
 
 import model.Ingrediente;
-import model.Nota;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

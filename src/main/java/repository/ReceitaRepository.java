@@ -1,7 +1,6 @@
 package repository;
 
 import model.Receita;
-import model.Usuario;
 import utils.TipoReceita;
 import utils.TipoRefeicao;
 

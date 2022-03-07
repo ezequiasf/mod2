@@ -99,4 +99,15 @@ public class Receita {
     public void setCalorias(Double calorias) {
         this.calorias = calorias;
     }
+
+    @Override
+    public String toString() {
+        return "Nome = " + nomeReceita +
+                ", Tipo =" + tipoReceita.getTipo() +
+                ", Refeicão =" + tipoRefeicao.getRefeicao() +
+                ", Preparo =" + modoPreparo +
+                ", Tempo =" + tempoPreparo +
+                ", Média de preço =" + mediaPreco +
+                ", Calorias =" + calorias;
+    }
 }

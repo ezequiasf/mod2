@@ -12,7 +12,7 @@ public class Nota {
     public Nota(Integer id_receita, Integer id_usuario, Double nota) {
         this.id_receita = id_receita;
         this.id_usuario = id_usuario;
-        this.nota = nota;
+        this.setNota(nota);
     }
 
     public Integer getId_nota() {
@@ -44,6 +44,10 @@ public class Nota {
     }
 
     public void setNota(Double nota) {
-        this.nota = nota;
+        if (nota>5.0 || nota<0.0){
+            System.out.println("Nota inválida. Informe uma nota entre 0 e 5.");
+        }else{
+            this.nota = nota;
+        }
     }
 }
