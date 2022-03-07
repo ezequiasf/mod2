@@ -58,7 +58,7 @@ public class ConfigAmbienteJDBC {
         Process p = null;
         try{
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("/bin/bash", "-c", "docker stop oracle-container");
+            pb.command("/bin/bash", "-c", "docker stop oracle-container && docker rm oracle-container");
             p = pb.start();
         }catch(IOException ex){
             System.err.println(ex.getMessage());
@@ -68,23 +68,16 @@ public class ConfigAmbienteJDBC {
 
     private static void createInitTables (Connection con) {
        List<String> consults =  SQLReader.getSQLStatement("initDB.sql");
-       Statement st = null;
-       try {
-            st = con.createStatement();
-           for (String consult : consults) {
-               try {
-                   st.executeUpdate(consult);
-               } catch (SQLException e) {
-                   e.printStackTrace();
-               } finally {
-                   closeStatement(st);
-               }
+       consults.forEach(System.out::println);
+       //PreparedStatement st = null;
+       consults.forEach(consult -> {
+           try {
+               PreparedStatement psmt = con.prepareStatement(consult);
+               psmt.execute();
+           } catch (SQLException e) {
+               e.printStackTrace();
            }
-       } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-           closeStatement(st);
-       }
+       });
     }
 
     private static String readConsole (Process p) throws IOException {
