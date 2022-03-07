@@ -21,17 +21,12 @@ public class ConfigAmbienteJDBC {
         {
             if (con==null)
             {
-                InputStreamReader ireader = new InputStreamReader(initContainer()
-                        .getInputStream());
-                BufferedReader buffer = new BufferedReader(ireader);
-                String line;
-                while ((line = buffer.readLine()) != null){
-                    System.out.println(line);
-                }
+                String resultProcess = readConsole(initContainer());
+                System.out.println(resultProcess);
                 if (ReadProperties.loadProperties()!=null)
                 {
                     Properties prop = ReadProperties.loadProperties();
-                    String urlOracle = prop.getProperty("url");
+                    String urlOracle = prop.getProperty("dburl");
                     con = DriverManager.getConnection(urlOracle, prop);
                     createInitTables(con);
                 }
@@ -48,10 +43,22 @@ public class ConfigAmbienteJDBC {
         Process p = null;
         try{
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("/bin/bash");
-            pb.command("-c");
-            pb.command("docker pull epiclabs/docker-oracle-xe-11g");
-            pb.command("docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e RELAX_SECURITY=1 epiclabs/docker-oracle-xe-11g");
+            pb.command("/bin/bash", "-c", "docker pull epiclabs/docker-oracle-xe-11g &&" +
+                    "docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
+                    "RELAX_SECURITY=1 --name container-oracle epiclabs/docker-oracle-xe-11g");
+            p = pb.start();
+        }catch(IOException ex){
+            System.err.println(ex.getMessage());
+        }
+        return p;
+    }
+
+    public static Process finishConnection (Connection con){
+        closeConnection(con);
+        Process p = null;
+        try{
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("/bin/bash", "-c", "docker stop oracle-container");
             p = pb.start();
         }catch(IOException ex){
             System.err.println(ex.getMessage());
@@ -78,6 +85,18 @@ public class ConfigAmbienteJDBC {
         }finally {
            closeStatement(st);
        }
+    }
+
+    private static String readConsole (Process p) throws IOException {
+        InputStreamReader ireader = new InputStreamReader(p.getInputStream());
+        BufferedReader buffer = new BufferedReader(ireader);
+        String line;
+        StringBuilder sb = new StringBuilder();
+        while ((line = buffer.readLine()) != null){
+            sb.append(line);
+            sb.append(System.getProperty("line.separator"));
+        }
+        return sb.toString();
     }
 
     public static void closeConnection(Connection con){

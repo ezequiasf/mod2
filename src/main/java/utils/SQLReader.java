@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SQLReader {
 
-    private static final String pathConsult = "/resources/statements/";
+    private static final String pathConsult = "./src/main/java/resources/statements/";
 
     public static List<String> getSQLStatement (String sqlArq){
         File arc = new File(pathConsult+sqlArq);
