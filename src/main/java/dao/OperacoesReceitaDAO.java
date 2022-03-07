@@ -4,25 +4,35 @@ import model.Receita;
 
 import java.util.List;
 
-public class OperacoesReceitaDAO implements OperacoesDAO<Receita>{
+public class OperacoesReceitaDAO implements GenericDAO<Receita>{
 
     @Override
-    public Boolean cadastro(Receita instancia) {
+    public void registrar(Receita receita) {
+
+    }
+
+    @Override
+    public void atualizar(Receita receita) {
+
+    }
+
+    @Override
+    public void deletar(Integer id) {
+
+    }
+
+    @Override
+    public Receita encontrarUm(Integer id) {
         return null;
     }
 
     @Override
-    public Boolean atualizar(Integer i, Receita instancia) {
+    public List<Receita> encontrarTodos() {
         return null;
     }
 
     @Override
-    public List<Receita> lerTodos() {
-        return null;
-    }
-
-    @Override
-    public Boolean remover(Integer id) {
+    public List<Receita> encontrarPorObjeto(Object obj) {
         return null;
     }
 }

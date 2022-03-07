@@ -4,24 +4,35 @@ import model.Usuario;
 
 import java.util.List;
 
-public class OperacoesUsuarioDAO implements OperacoesDAO<Usuario>{
+public class OperacoesUsuarioDAO implements GenericDAO<Usuario>{
+
     @Override
-    public Boolean cadastro(Usuario instancia) {
+    public void registrar(Usuario usuario) {
+
+    }
+
+    @Override
+    public void atualizar(Usuario usuario) {
+
+    }
+
+    @Override
+    public void deletar(Integer id) {
+
+    }
+
+    @Override
+    public Usuario encontrarUm(Integer id) {
         return null;
     }
 
     @Override
-    public Boolean atualizar(Integer i, Usuario instancia) {
+    public List<Usuario> encontrarTodos() {
         return null;
     }
 
     @Override
-    public List<Usuario> lerTodos() {
-        return null;
-    }
-
-    @Override
-    public Boolean remover(Integer id) {
+    public List<Usuario> encontrarPorObjeto(Object obj) {
         return null;
     }
 }

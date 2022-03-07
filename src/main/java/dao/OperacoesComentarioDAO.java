@@ -4,24 +4,35 @@ import model.Comentario;
 
 import java.util.List;
 
-public class OperacoesComentarioDAO implements OperacoesDAO<Comentario>{
+public class OperacoesComentarioDAO implements GenericDAO<Comentario>{
+
     @Override
-    public Boolean cadastro(Comentario instancia) {
+    public void registrar(Comentario comentario) {
+
+    }
+
+    @Override
+    public void atualizar(Comentario comentario) {
+
+    }
+
+    @Override
+    public void deletar(Integer id) {
+
+    }
+
+    @Override
+    public Comentario encontrarUm(Integer id) {
         return null;
     }
 
     @Override
-    public Boolean atualizar(Integer i, Comentario instancia) {
+    public List<Comentario> encontrarTodos() {
         return null;
     }
 
     @Override
-    public List<Comentario> lerTodos() {
-        return null;
-    }
-
-    @Override
-    public Boolean remover(Integer id) {
+    public List<Comentario> encontrarPorObjeto(Object obj) {
         return null;
     }
 }
