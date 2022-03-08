@@ -1,21 +1,20 @@
 package model;
-
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class Usuario {
 
     private Integer id_usuario;
     private String nomeUsuario;
     private String senha;
-    private Date nascimento;
+    private LocalDate nascimento;
     private String email;
 
     public Usuario (){}
 
-    public Usuario(String nomeUsuario, String senha, Date nascimento, String email) {
+    public Usuario(String nomeUsuario, String senha,int anoNasc, int mesNasc, int diaNasc, String email) {
         this.nomeUsuario = nomeUsuario;
         this.senha = senha;
-        this.nascimento = nascimento;
+        setNascimento(anoNasc, mesNasc, diaNasc);
         this.email = email;
     }
 
@@ -43,12 +42,12 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public Date getNascimento() {
+    public LocalDate getNascimento() {
         return nascimento;
     }
 
-    public void setNascimento(Date nascimento) {
-        this.nascimento = nascimento;
+    public void setNascimento(int ano, int mes, int dia) {
+        this.nascimento = LocalDate.of(ano, mes, dia);
     }
 
     public String getEmail() {

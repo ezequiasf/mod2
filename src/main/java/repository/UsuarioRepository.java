@@ -2,10 +2,8 @@ package repository;
 
 import model.Usuario;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,8 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
             psmt.setInt(1, usuario.getId());
             psmt.setString(2, usuario.getUsuario());
             psmt.setString(3, usuario.getSenha());
-            psmt.setDate(4, usuario.getNascimento());
+            psmt.setDate(4, (Date) Date.from(usuario.getNascimento()
+                    .atStartOfDay(ZoneId.systemDefault()).toInstant()));
             psmt.setString(5, usuario.getEmail());
             psmt.executeUpdate();
         } catch (SQLException e) {
@@ -49,7 +48,8 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
             PreparedStatement psmt = con.prepareStatement(sqlAtualizar);
             psmt.setString(1,usuario.getUsuario());
             psmt.setString(2,usuario.getSenha());
-            psmt.setDate(3, usuario.getNascimento());
+            psmt.setDate(3, (Date) Date.from(usuario.getNascimento()
+                    .atStartOfDay(ZoneId.systemDefault()).toInstant()));
             psmt.setString(4, usuario.getEmail());
             psmt.setInt(5, id);
             psmt.executeUpdate();
@@ -80,9 +80,13 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
             psmt.setInt(1,id);
             ResultSet rs = psmt.executeQuery();
             while (rs.next()){
+                Date dt = rs.getDate("NASCIMENTO");
+                int ano = dt.toLocalDate().getYear();
+                int mes = dt.toLocalDate().getDayOfMonth();
+                int dia = dt.toLocalDate().getDayOfMonth();
                 us.setId(rs.getInt("ID_USUARIO"));
                 us.setUsuario(rs.getString("NOME_USUARIO"));
-                us.setNascimento(rs.getDate("NASCIMENTO"));
+                us.setNascimento(ano,mes,dia);
                 us.setSenha(rs.getString("SENHA"));
                 us.setEmail(rs.getString("EMAIL"));
             }
@@ -102,9 +106,13 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
             ResultSet rs = psmt.executeQuery();
             while (rs.next()){
                 Usuario us = new Usuario();
+                Date dt = rs.getDate("NASCIMENTO");
+                int ano = dt.toLocalDate().getYear();
+                int mes = dt.toLocalDate().getDayOfMonth();
+                int dia = dt.toLocalDate().getDayOfMonth();
                 us.setId(rs.getInt("ID_USUARIO"));
                 us.setUsuario(rs.getString("NOME_USUARIO"));
-                us.setNascimento(rs.getDate("NASCIMENTO"));
+                us.setNascimento(ano,mes,dia);
                 us.setSenha(rs.getString("SENHA"));
                 us.setEmail(rs.getString("EMAIL"));
                 usuarios.add(us);
