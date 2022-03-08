@@ -11,7 +11,7 @@ public enum TipoReceita {
 
     private final String tipo;
 
-    private TipoReceita(String tipo) {
+    TipoReceita(String tipo) {
         this.tipo = tipo;
     }
 

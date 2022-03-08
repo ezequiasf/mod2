@@ -2,7 +2,6 @@ package services;
 
 import model.Receita;
 import repository.ReceitaRepository;
-import repository.UsuarioRepository;
 
 import java.util.List;
 

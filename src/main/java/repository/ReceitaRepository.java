@@ -22,8 +22,9 @@ public class ReceitaRepository implements GenericRepository<Receita> {
     @Override
     public Receita registrar(Receita receita) {
         String sqlInsert = "INSERT INTO APP_RECEITAS.RECEITA (ID_RECEITA, ID_USUARIO, NOME_RECEITA" +
-                ", TIPO_RECEITA, CALORIAS, MODO_PREPARO, TEMPO_PREPARO, MEDIA_PRECO, TIPO_REFEICAO) " +
-                "VALUES (?,?,?,?,?,?,?,?,?)";
+                ", TIPO_RECEITA, CALORIAS, MODO_PREPARO, TEMPO_PREPARO, MEDIA_PRECO" +
+                ", TIPO_REFEICAO, CLASSIFICACAO) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?)";
         String sqlIdConsult = "SELECT APP_RECEITAS.SEQ_RECEITA.nextval id_receita FROM DUAL";
         try {
             PreparedStatement psmt = con.prepareStatement(sqlIdConsult);
@@ -41,6 +42,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
             psmt.setInt(7, receita.getTempoPreparo());
             psmt.setDouble(8, receita.getMediaPreco());
             psmt.setString(9, receita.getTipoRefeicao().getRefeicao());
+            psmt.setDouble(10,receita.getMediaNota());
             psmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,7 +87,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
     public Receita encontrarUm(Integer id) {
         String consultaUm = "SELECT ID_RECEITA, ID_USUARIO, NOME_RECEITA, " +
                 " TIPO_RECEITA, CALORIAS, MEDIA_PRECO, TEMPO_PREPARO" +
-                ",TIPO_REFEICAO, MODO_PREPARO FROM APP_RECEITAS.RECEITA WHERE ID_RECEITA = ?";
+                ",TIPO_REFEICAO, MODO_PREPARO, CLASSIFICACAO FROM APP_RECEITAS.RECEITA WHERE ID_RECEITA = ?";
         Receita receita = new Receita();
         try  {
             PreparedStatement psmt = con.prepareStatement(consultaUm);
@@ -101,6 +103,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
                 receita.setTipoRefeicao(TipoRefeicao.valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
                 receita.setModoPreparo(rs.getString("MODO_PREPARO"));
+                receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -112,7 +115,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
     public List<Receita> encontrarTodos() {
         String consultaTodos = "SELECT ID_RECEITA, ID_USUARIO, NOME_RECEITA," +
                 " TIPO_RECEITA, CALORIAS, MEDIA_PRECO, TEMPO_PREPARO," +
-                " TIPO_REFEICAO, MODO_PREPARO FROM APP_RECEITAS.RECEITA";
+                " TIPO_REFEICAO, MODO_PREPARO, CLASSIFICACAO FROM APP_RECEITAS.RECEITA";
         List<Receita> receitas = new ArrayList<>();
         try {
             PreparedStatement psmt = con.prepareStatement(consultaTodos);
@@ -128,6 +131,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
                 receita.setTipoRefeicao(TipoRefeicao.valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
                 receita.setModoPreparo(rs.getString("MODO_PREPARO"));
+                receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
                 receitas.add(receita);
             }
         }catch (SQLException e){
