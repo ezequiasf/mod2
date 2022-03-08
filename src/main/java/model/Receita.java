@@ -14,6 +14,7 @@ public class Receita {
     private Integer tempoPreparo;
     private Double mediaPreco;
     private Double calorias;
+    private Double mediaNota;
 
     public Receita (){}
 
@@ -98,5 +99,25 @@ public class Receita {
 
     public void setCalorias(Double calorias) {
         this.calorias = calorias;
+    }
+
+    public Double getMediaNota() {
+        return mediaNota;
+    }
+
+    public void setMediaNota(Double mediaNota) {
+        this.mediaNota = mediaNota;
+    }
+
+    @Override
+    public String toString() {
+        return "Nome = " + nomeReceita +
+                ", Tipo =" + tipoReceita.getTipo() +
+                ", Refeicão =" + tipoRefeicao.getRefeicao() +
+                ", Preparo =" + modoPreparo +
+                ", Tempo =" + tempoPreparo +
+                ", Média de preço =" + mediaPreco +
+                ", Calorias =" + calorias +
+                ", Classificação ="+mediaNota;
     }
 }

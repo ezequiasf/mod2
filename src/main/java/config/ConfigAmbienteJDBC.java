@@ -13,27 +13,29 @@ import java.util.Properties;
 public class ConfigAmbienteJDBC {
 
     private static Connection con;
-    //TODO: Adicionar sistema de log
+
     public static Connection getConnection()
     {
         try
         {
             if (con==null)
             {
-                String resultProcess = readConsole(initContainer());
-                System.out.println(resultProcess);
+                readConsole(initContainer());
                 if (ReadProperties.loadProperties()!=null)
                 {
                     Properties prop = ReadProperties.loadProperties();
                     String urlOracle = prop.getProperty("dburl");
                     con = DriverManager.getConnection(urlOracle, prop);
+                    PreparedStatement psmt = con.prepareStatement("CREATE USER APP_RECEITAS IDENTIFIED BY oracle;");
+                    psmt.execute();
+                    System.out.println("Schema App receitas criado!");
                     createInitTables(con);
+                    System.out.println("Estrutura criada!");
                 }
             }
         }catch(SQLException | IOException ex)
         {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
+            System.out.println("Estrutura já criada, retornando a conexão...");
         }
         return con;
     }
@@ -46,6 +48,7 @@ public class ConfigAmbienteJDBC {
                     "docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
                     "RELAX_SECURITY=1 --name container-oracle epiclabs/docker-oracle-xe-11g");
             p = pb.start();
+            System.out.println("Container oracle em serviço!");
         }catch(IOException ex){
             System.err.println(ex.getMessage());
         }
@@ -66,10 +69,8 @@ public class ConfigAmbienteJDBC {
     }
 
     private static void createInitTables (Connection con) {
-       List<String> consults =  SQLReader.getSQLStatement("initDB.sql");
-       consults.forEach(System.out::println);
-       //PreparedStatement st = null;
-       consults.forEach(consult -> {
+        List<String> consults =  SQLReader.getSQLStatement("initDB.sql");
+        consults.forEach(consult -> {
            try {
                PreparedStatement psmt = con.prepareStatement(consult);
                psmt.execute();
@@ -78,6 +79,7 @@ public class ConfigAmbienteJDBC {
            }
        });
     }
+
 
     private static String readConsole (Process p) throws IOException {
         InputStreamReader ireader = new InputStreamReader(p.getInputStream());

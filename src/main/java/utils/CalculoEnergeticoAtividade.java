@@ -10,7 +10,7 @@ public class CalculoEnergeticoAtividade extends CalculoEnergetico {
     private double fatorAtividadeFisica;
 
     /**
-     * Instancia uma nova Calculo energetico atividade.
+     * Instancia um novo Cálculo energetico atividade.
      *
      * @param ocorrenciaAtividade Recebe a ocorrência de atividades que a pessoa
      *                            analisada tem.

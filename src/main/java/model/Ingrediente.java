@@ -45,4 +45,12 @@ public class Ingrediente {
     public void setQuantidade(String quantidade) {
         this.quantidade = quantidade;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "nome = " + nome +
+                ", quantidade = " + quantidade +
+                '}';
+    }
 }
