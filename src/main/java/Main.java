@@ -1,24 +1,19 @@
 import config.ConfigAmbienteJDBC;
+import repository.ComentarioRepository;
 import repository.UsuarioRepository;
 import services.UsuarioService;
+import view.Tela;
 
-import java.io.IOException;
 import java.sql.Connection;
-
 
 public class Main {
     public static void main(String[] args) {
 
-        Connection con = null;
-        try {
-            con = ConfigAmbienteJDBC.getConnection();
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
-        UsuarioRepository usr = new UsuarioRepository(con);
-        UsuarioService us = new UsuarioService(usr);
 
-
-
+////        Connection con = null;
+////        con = ConfigAmbienteJDBC.getConnection();
+////        UsuarioRepository usr = new UsuarioRepository(con);
+////        UsuarioService us = new UsuarioService(usr);
+//        Tela.telaPrincipal();
     }
 }

@@ -13,8 +13,8 @@ public class NotaService {
         this.notaRepo = notaRepo;
     }
 
-    public void adicionarNota (Nota nota){
-        notaRepo.registrar(nota);
+    public Nota adicionarNota (Nota nota){
+        return notaRepo.registrar(nota);
     }
 
     public void atualizarNota (Integer id, Nota nota){

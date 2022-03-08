@@ -14,19 +14,20 @@ public class ConfigAmbienteJDBC {
 
     private static Connection con;
 
-    public static Connection getConnection() throws InterruptedException, IOException {
+    public static Connection getConnection() {
         try
         {
             if (con==null)
             {
-                String process = readConsole(initContainer());
-                System.out.println(process);
+//                TODO: Fazer lógica de cache
+//                String process = readConsole(initContainer());
+//                System.out.println(process);
                 if (ReadProperties.loadProperties()!=null)
                 {
                     Properties prop = ReadProperties.loadProperties();
                     String urlOracle = prop.getProperty("dburl");
                     con = DriverManager.getConnection(urlOracle, prop);
-                    createInitTables(con);
+//                    createInitTables(con);
                     System.out.println("Estrutura criada!");
                 }
             }
@@ -38,11 +39,12 @@ public class ConfigAmbienteJDBC {
     }
 
     private static Process initContainer (){
+       //TODO: retirar o --rm
         Process p = null;
         try{
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("/bin/bash", "-c", "docker pull epiclabs/docker-oracle-xe-11g &&" +
-                    "docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
+                    "docker run --rm -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
                     "RELAX_SECURITY=1 epiclabs/docker-oracle-xe-11g");
             p = pb.start();
         }catch(IOException ex){
@@ -65,6 +67,7 @@ public class ConfigAmbienteJDBC {
     }
 
     private static void createInitTables (Connection con) {
+
         List<String> consults =  SQLReader.getSQLStatement("initDB.sql");
         consults.forEach(consult -> {
            try {

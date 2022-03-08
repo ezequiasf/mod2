@@ -30,4 +30,8 @@ public class UsuarioService {
         usuarios.forEach(System.out::println);
     }
 
+    public Usuario encontrarPorReferencia (Usuario usuario){
+        return usuRepo.encontrarPorReferencia(usuario);
+    }
+
 }

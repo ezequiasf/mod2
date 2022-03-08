@@ -13,8 +13,8 @@ public class IngredienteService {
         this.ingRepo = ingRepo;
     }
 
-    public void adicionarIngrediente (Ingrediente ingrediente){
-        ingRepo.registrar(ingrediente);
+    public Ingrediente adicionarIngrediente (Ingrediente ingrediente){
+        return ingRepo.registrar(ingrediente);
     }
 
     public void atualizarIngrediente (Integer id, Ingrediente ingrediente){

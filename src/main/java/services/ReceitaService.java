@@ -13,8 +13,8 @@ public class ReceitaService {
         this.receitaRepo = receitaRepo;
     }
 
-    public void adicionarReceita (Receita receita){
-        receitaRepo.registrar(receita);
+    public Receita adicionarReceita (Receita receita){
+        return receitaRepo.registrar(receita);
     }
 
     public void atualizarReceita (Integer id, Receita receita){

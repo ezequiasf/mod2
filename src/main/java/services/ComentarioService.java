@@ -13,8 +13,8 @@ public class ComentarioService {
         this.comentarioRepository = comentarioRepository;
     }
 
-    public void adicionarComentario (Comentario coment){
-        comentarioRepository.registrar(coment);
+    public Comentario adicionarComentario (Comentario coment){
+       return comentarioRepository.registrar(coment);
     }
 
     public void atualizarComentario (Integer id, Comentario coment){
