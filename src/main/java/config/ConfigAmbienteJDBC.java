@@ -29,9 +29,12 @@ public class ConfigAmbienteJDBC {
                     con = DriverManager.getConnection(urlOracle, prop);
 //                    createInitTables(con);
                     System.out.println("Estrutura criada!");
+//
+//                    createInitTables(con);
+//                    System.out.println("Estrutura criada!");
                 }
             }
-        }catch(SQLException ex)
+        }catch(SQLException  ex )
         {
             System.out.println("Estrutura já criada, retornando a conexão...");
         }
@@ -43,9 +46,12 @@ public class ConfigAmbienteJDBC {
         Process p = null;
         try{
             ProcessBuilder pb = new ProcessBuilder();
+
             pb.command("/bin/bash", "-c", "docker pull epiclabs/docker-oracle-xe-11g &&" +
-                    "docker run --rm -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
-                    "RELAX_SECURITY=1 epiclabs/docker-oracle-xe-11g");
+                    "docker run --rm -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e ");
+//            pb.command("cmd.exe", "/c", "docker pull epiclabs/docker-oracle-xe-11g &&" +
+//                    "docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
+//                    "RELAX_SECURITY=1 epiclabs/docker-oracle-xe-11g"));
             p = pb.start();
         }catch(IOException ex){
             System.err.println(ex.getMessage());

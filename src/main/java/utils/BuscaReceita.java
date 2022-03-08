@@ -17,16 +17,39 @@ public class BuscaReceita {
             SQLReader.getSQLStatement("scriptsFiltro.sql");
     private final Connection con;
 
-    public BuscaReceita (Connection con){
+    public BuscaReceita(Connection con) {
         this.con = con;
     }
 
-    private List<Object[]> consulta (Object opcao, Integer index){
+    private List<Object[]> consulta(Integer index, Object... opcoes) {
         List<Object[]> informacoes = new ArrayList<>();
         try {
             PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(index));
+            int contador = 1;
+            for (Object obj : opcoes) {
+                if (obj instanceof String)
+                    pstm.setString(contador, (String) obj);
+                else if (obj instanceof Integer)
+                    pstm.setInt(contador, (Integer) obj);
+                else if (obj instanceof Double)
+                    pstm.setDouble(contador, (Double) obj);
+                contador++;
+            }
+            informacoes = constroiLista(pstm);
+
+        } catch(SQLException e){
+                e.printStackTrace();
+            }
+        return informacoes;
+        }
+
+    private List<Object[]> consulta(Object opcao, Integer index) {
+        List<Object[]> informacoes = new ArrayList<>();
+
+        try {
+            PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(index));
             if (opcao instanceof String)
-                pstm.setString(1,(String)opcao);
+                pstm.setString(1, (String) opcao);
             else if (opcao instanceof Integer)
                 pstm.setInt(1, (Integer) opcao);
             else if (opcao instanceof Double)
@@ -40,7 +63,7 @@ public class BuscaReceita {
 
     // {  [r, i, u]  }, {[r, i, u ]}, ....
     // list.forEach ( arrO)
-    private List<Object[]> constroiLista (PreparedStatement ps) throws SQLException {
+    private List<Object[]> constroiLista(PreparedStatement ps) throws SQLException {
         List<Object[]> informacoes = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -55,22 +78,29 @@ public class BuscaReceita {
             receita.setCalorias(rs.getDouble("CALORIAS"));
             receita.setMediaPreco(rs.getDouble("MEDIA_PRECO"));
             receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-            receita.setTipoRefeicao(TipoRefeicao
-                    .valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
+            if (rs.getString("TIPO_REFEICAO").equals("Almoço ou janta")) {
+                receita.setTipoRefeicao(TipoRefeicao.ALMOCO_JANTA);
+            } else if (rs.getString("TIPO_REFEICAO").equals("Lanche")) {
+                receita.setTipoRefeicao(TipoRefeicao.LANCHE);
+            } else {
+                receita.setTipoRefeicao(TipoRefeicao.CAFE);
+            }
+            receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
+
             receita.setModoPreparo(rs.getString("MODO_PREPARO"));
             ing.setNome(rs.getString("NOME"));
-            ing.setQuantidade(rs.getString("MODO_PREPARO"));
+            ing.setQuantidade(rs.getString("QUANTIDADE"));
             informacoes.add(new Object[]{receita, ing, us});
         }
         return informacoes;
     }
 
     public List<Object[]> filtroUmIngrediente(String ingrediente, Integer index) {
-        return consulta(ingrediente, 4);
+        return consulta(ingrediente, index);
     }
 
     public List<Object[]> filtroTipoReceita(TipoReceita tipo, Integer index) {
-        return consulta(tipo.getTipo(), 6);
+        return consulta(tipo.getTipo(), index);
     }
 
     public List<Object[]> filtroLimiteTempo(Integer tempo, Integer index) {
@@ -102,6 +132,15 @@ public class BuscaReceita {
         }
         return informacoes;
     }
+
+
+    public List<Object[]> filtroCalorias(Integer index, Object...opcoes) {
+        return consulta(index, opcoes);
+    }
+
+
+
+
     //TODO: Filtro de nota
 
 //    public static List<Receita> filtroAlmoco(List<Receita> lista, Double calorias) {
