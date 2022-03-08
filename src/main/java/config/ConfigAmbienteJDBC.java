@@ -14,26 +14,23 @@ public class ConfigAmbienteJDBC {
 
     private static Connection con;
 
-    public static Connection getConnection()
-    {
+    public static Connection getConnection() throws InterruptedException, IOException {
         try
         {
             if (con==null)
             {
-                readConsole(initContainer());
+                String process = readConsole(initContainer());
+                System.out.println(process);
                 if (ReadProperties.loadProperties()!=null)
                 {
                     Properties prop = ReadProperties.loadProperties();
                     String urlOracle = prop.getProperty("dburl");
                     con = DriverManager.getConnection(urlOracle, prop);
-                    PreparedStatement psmt = con.prepareStatement("CREATE USER APP_RECEITAS IDENTIFIED BY oracle;");
-                    psmt.execute();
-                    System.out.println("Schema App receitas criado!");
                     createInitTables(con);
                     System.out.println("Estrutura criada!");
                 }
             }
-        }catch(SQLException | IOException ex)
+        }catch(SQLException ex)
         {
             System.out.println("Estrutura já criada, retornando a conexão...");
         }
@@ -46,9 +43,8 @@ public class ConfigAmbienteJDBC {
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("/bin/bash", "-c", "docker pull epiclabs/docker-oracle-xe-11g &&" +
                     "docker run -d -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -e ORACLE_PASSWORD=oracle -e " +
-                    "RELAX_SECURITY=1 --name container-oracle epiclabs/docker-oracle-xe-11g");
+                    "RELAX_SECURITY=1 epiclabs/docker-oracle-xe-11g");
             p = pb.start();
-            System.out.println("Container oracle em serviço!");
         }catch(IOException ex){
             System.err.println(ex.getMessage());
         }

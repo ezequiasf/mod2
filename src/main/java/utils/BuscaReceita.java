@@ -21,10 +21,10 @@ public class BuscaReceita {
         this.con = con;
     }
 
-    private List<Object[]> consulta (Object opcao){
+    private List<Object[]> consulta (Object opcao, Integer index){
         List<Object[]> informacoes = new ArrayList<>();
         try {
-            PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(4));
+            PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(index));
             if (opcao instanceof String)
                 pstm.setString(1,(String)opcao);
             else if (opcao instanceof Integer)
@@ -38,6 +38,8 @@ public class BuscaReceita {
         return informacoes;
     }
 
+    // {  [r, i, u]  }, {[r, i, u ]}, ....
+    // list.forEach ( arrO)
     private List<Object[]> constroiLista (PreparedStatement ps) throws SQLException {
         List<Object[]> informacoes = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
@@ -63,20 +65,20 @@ public class BuscaReceita {
         return informacoes;
     }
 
-    public List<Object[]> filtroUmIngrediente(String ingrediente) {
-        return consulta(ingrediente);
+    public List<Object[]> filtroUmIngrediente(String ingrediente, Integer index) {
+        return consulta(ingrediente, 4);
     }
 
-    public List<Object[]> filtroTipoReceita(TipoReceita tipo) {
-        return consulta(tipo.getTipo());
+    public List<Object[]> filtroTipoReceita(TipoReceita tipo, Integer index) {
+        return consulta(tipo.getTipo(), 6);
     }
 
-    public List<Object[]> filtroLimiteTempo(Integer tempo) {
-        return consulta(tempo);
+    public List<Object[]> filtroLimiteTempo(Integer tempo, Integer index) {
+        return consulta(tempo, 3);
     }
 
-    public List<Object[]> filtroLimitePreco(Double preco) {
-        return consulta(preco);
+    public List<Object[]> filtroLimitePreco(Double preco, Integer index) {
+        return consulta(preco, 0);
     }
 
     public List<Object[]> listaPrecosCrescente() {
