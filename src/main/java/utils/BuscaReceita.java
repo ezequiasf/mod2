@@ -33,6 +33,13 @@ public class BuscaReceita {
                     pstm.setInt(contador, (Integer) obj);
                 else if (obj instanceof Double)
                     pstm.setDouble(contador, (Double) obj);
+                else if (obj instanceof  TipoReceita){
+                    TipoReceita tp = (TipoReceita) obj;
+                    pstm.setString(1, tp.getTipo());
+                }else if (obj instanceof  TipoRefeicao){
+                    TipoRefeicao tr = (TipoRefeicao) obj;
+                    pstm.setString(1, tr.getRefeicao());
+                }
                 contador++;
             }
             informacoes = constroiLista(pstm);

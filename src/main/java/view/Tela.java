@@ -4,10 +4,8 @@ import model.*;
 import services.*;
 import utils.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Tela {
 
@@ -417,10 +415,10 @@ public class Tela {
 
     public static int viewPersonalizadaId (Usuario usuario){
         System.out.println("Informe o id da receita:");
-        busca.consulta(usuario.getId(), 9).forEach(arr->{
-            Receita r = (Receita) arr[0];
-            System.out.println(r.getId_receita()+" - "+ r.getNomeReceita());
-        });
+        busca.consulta(usuario.getId(), 9).stream().map(arr->{
+            return (Receita) arr[0];
+        }).distinct()
+                .forEach(r-> System.out.println(r.getId_receita()+" - "+r.getNomeReceita()));
         int resposta = scanner.nextInt();
         scanner.nextLine(); //flush
         return resposta;
@@ -432,12 +430,10 @@ public class Tela {
     }
 
     public static void apresentador (List<Object[]> lista){
-        lista.forEach(arr -> {
-            System.out.println(arr[0]);
-            System.out.println(arr[1]);
-            Usuario usuario = (Usuario) arr[2];
-            System.out.println("Usuário: "+usuario.getUsuario());
-        });
+       List<Receita> receitas = lista.stream().map(arr-> {
+           return (Receita) arr[0];
+       }).distinct().collect(Collectors.toList());
+       receitas.forEach(System.out::println);
     }
 
     public static void apresentaAleatorio (List<Object[]> lista){
