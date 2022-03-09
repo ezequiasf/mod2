@@ -71,7 +71,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
         }
     }
 
-    //TODO: Questão da constraint
+    //Não deleta caso exista algum ingrediente o referenciando (O mesmo vale para usuário)
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.RECEITA WHERE ID_RECEITA = ?";

@@ -388,7 +388,10 @@ public class Tela {
 
     public static int viewPersonalizadaId (Usuario usuario){
         System.out.println("Informe o id da receita:");
-        busca.consulta(usuario.getId(), 10);
+        busca.consulta(usuario.getId(), 9).forEach(arr->{
+            Receita r = (Receita) arr[0];
+            System.out.println(r.getId_receita()+" - "+ r.getNomeReceita());
+        });
         int resposta = scanner.nextInt();
         scanner.nextLine(); //flush
         return resposta;

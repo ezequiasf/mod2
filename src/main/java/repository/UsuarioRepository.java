@@ -57,7 +57,6 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
         }
     }
 
-    //TODO: java.sql.SQLIntegrityConstraintViolationException: ORA-02292: restrição de integridade
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.USUARIO WHERE ID_USUARIO = ?";
@@ -140,7 +139,7 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
                 usuarioConsulta.setEmail(rs.getString("EMAIL"));
                 Date dt = rs.getDate("NASCIMENTO");
                 int ano = dt.toLocalDate().getYear();
-                int mes = dt.toLocalDate().getDayOfMonth();
+                int mes = dt.toLocalDate().getMonth().getValue();
                 int dia = dt.toLocalDate().getDayOfMonth();
                 usuarioConsulta.setNascimento(ano, mes,dia);
             }
