@@ -6,15 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import model.Nota;
 
 public class NotaRepository implements GenericRepository<Nota> {
 
     private final Connection con;
 
-    public NotaRepository (Connection con){
+    public NotaRepository(Connection con) {
         this.con = con;
     }
+
     @Override
     public Nota registrar(Nota nota) {
         String sqlInsert = "INSERT INTO APP_RECEITAS.NOTA (ID_NOTA, ID_RECEITA, ID_USUNOTA" +
@@ -42,12 +44,12 @@ public class NotaRepository implements GenericRepository<Nota> {
     public void atualizar(Integer id, Nota nota) {
         String sqlAtualizar = "UPDATE APP_RECEITAS.NOTA SET CLASSIFICACAO = ?" +
                 " WHERE ID_NOTA = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlAtualizar);
-            psmt.setDouble(1,nota.getNota());
+            psmt.setDouble(1, nota.getNota());
             psmt.setInt(2, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -55,11 +57,11 @@ public class NotaRepository implements GenericRepository<Nota> {
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.NOTA WHERE ID_NOTA = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlDeletar);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -69,17 +71,17 @@ public class NotaRepository implements GenericRepository<Nota> {
         String consultaUm = "SELECT ID_NOTA, ID_RECEITA, ID_USUNOTA," +
                 " CLASSIFICACAO FROM APP_RECEITAS.NOTA WHERE ID_NOTA = ?";
         Nota nota = new Nota();
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(consultaUm);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 nota.setId_nota(rs.getInt("ID_NOTA"));
                 nota.setId_receita(rs.getInt("ID_RECEITA"));
                 nota.setId_usuario(rs.getInt("ID_USUNOTA"));
                 nota.setNota(rs.getDouble("CLASSIFICACAO"));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return nota;
@@ -94,7 +96,7 @@ public class NotaRepository implements GenericRepository<Nota> {
         try {
             PreparedStatement psmt = con.prepareStatement(consultaTodos);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Nota nota = new Nota();
                 nota.setId_nota(rs.getInt("ID_NOTA"));
                 nota.setId_receita(rs.getInt("ID_RECEITA"));
@@ -102,7 +104,7 @@ public class NotaRepository implements GenericRepository<Nota> {
                 nota.setNota(rs.getDouble("CLASSIFICACAO"));
                 notas.add(nota);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return notas;

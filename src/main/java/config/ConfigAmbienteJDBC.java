@@ -15,62 +15,58 @@ public class ConfigAmbienteJDBC {
     private static Connection con;
 
     public static Connection getConnection() {
-        try
-        {
-            if (con==null)
-            {
-                if (ReadProperties.loadProperties()!=null)
-                {
+        try {
+            if (con == null) {
+                if (ReadProperties.loadProperties() != null) {
                     Properties prop = ReadProperties.loadProperties();
                     String urlOracle = prop.getProperty("dburl");
                     con = DriverManager.getConnection(urlOracle, prop);
                 }
             }
-        }catch(SQLException  ex )
-        {
+        } catch (SQLException ex) {
             System.out.println("Estrutura já criada, retornando a conexão...");
         }
         return con;
     }
 
-    private static void createInitTables (Connection con) {
+    private static void createInitTables(Connection con) {
 
-        List<String> consults =  SQLReader.getSQLStatement("initDB.sql");
+        List<String> consults = SQLReader.getSQLStatement("initDB.sql");
         consults.forEach(consult -> {
-           try {
-               PreparedStatement psmt = con.prepareStatement(consult);
-               psmt.execute();
-           } catch (SQLException e) {
-               e.printStackTrace();
-           }
-       });
+            try {
+                PreparedStatement psmt = con.prepareStatement(consult);
+                psmt.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    public static void closeConnection(Connection con){
-        if(con!=null){
-            try{
+    public static void closeConnection(Connection con) {
+        if (con != null) {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
         }
     }
 
     public static void closeStatement(Statement st) {
-        if(st!=null){
-            try{
+        if (st != null) {
+            try {
                 st.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
         }
     }
 
-    public static void closeResultSet(ResultSet rs){
-        if(rs!=null){
-            try{
+    public static void closeResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
                 rs.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
         }

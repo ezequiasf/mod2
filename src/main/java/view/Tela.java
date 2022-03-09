@@ -253,7 +253,6 @@ public class Tela {
             System.out.println("===================== Opções de Lanche =======================");
            apresentador(busca.consulta(TipoRefeicao.LANCHE, 7));
         } else {
-           Random rd = new Random();
            System.out.println("================ Cardápio do dia ======================");
 
             System.out.println("********* Café da manha *********");
@@ -396,7 +395,7 @@ public class Tela {
             ing.setId_receita(idAntigoReceita);
             ingSvc.adicionarIngrediente(ing);
         });
-        idsIngAntigos.forEach(id-> ingSvc.removerIngrediente(id));
+        idsIngAntigos.forEach(ingSvc::removerIngrediente);
         System.out.println("Receita atualizada com sucesso.");
     }
 
@@ -407,7 +406,7 @@ public class Tela {
         ingAntigo.setId_receita(idReceitaAntiga);
 
         List<Integer> idsAntigosIngredientes = ingSvc.encontrarPorReferencia(ingAntigo);
-        idsAntigosIngredientes.forEach( id -> ingSvc.removerIngrediente(id));
+        idsAntigosIngredientes.forEach(ingSvc::removerIngrediente);
 
         receitaSvc.removerReceita(idReceitaAntiga);
         System.out.println("Receita deletada com sucesso.");
@@ -415,9 +414,7 @@ public class Tela {
 
     public static int viewPersonalizadaId (Usuario usuario){
         System.out.println("Informe o id da receita:");
-        busca.consulta(usuario.getId(), 9).stream().map(arr->{
-            return (Receita) arr[0];
-        }).distinct()
+        busca.consulta(usuario.getId(), 9).stream().map(arr-> (Receita) arr[0]).distinct()
                 .forEach(r-> System.out.println(r.getId_receita()+" - "+r.getNomeReceita()));
         int resposta = scanner.nextInt();
         scanner.nextLine(); //flush
@@ -430,9 +427,7 @@ public class Tela {
     }
 
     public static void apresentador (List<Object[]> lista){
-       List<Receita> receitas = lista.stream().map(arr-> {
-           return (Receita) arr[0];
-       }).distinct().collect(Collectors.toList());
+       List<Receita> receitas = lista.stream().map(arr-> (Receita) arr[0]).distinct().collect(Collectors.toList());
        receitas.forEach(System.out::println);
     }
 

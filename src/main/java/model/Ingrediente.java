@@ -6,7 +6,8 @@ public class Ingrediente {
     private String nome;
     private String quantidade;
 
-    public Ingrediente (){}
+    public Ingrediente() {
+    }
 
     public Ingrediente(Integer id_receita, String nome, String quantidade) {
         this.id_receita = id_receita;

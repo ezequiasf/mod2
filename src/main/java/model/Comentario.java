@@ -7,7 +7,8 @@ public class Comentario {
     private Integer id_usuario;
     private String comentario;
 
-    public Comentario (){}
+    public Comentario() {
+    }
 
     public Comentario(Integer id_receita, Integer id_usuario, String comentario) {
         this.id_receita = id_receita;
@@ -49,6 +50,6 @@ public class Comentario {
 
     @Override
     public String toString() {
-        return "comentario=" + comentario ;
+        return "comentario=" + comentario;
     }
 }

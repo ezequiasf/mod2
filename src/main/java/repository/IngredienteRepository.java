@@ -111,7 +111,7 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
         return ingredientes;
     }
 
-    public List<Integer> encontrarPorReferencia (Ingrediente ing){
+    public List<Integer> encontrarPorReferencia(Ingrediente ing) {
         String consultaTodos = "SELECT ID_INGREDIENTE " +
                 " FROM APP_RECEITAS.INGREDIENTE WHERE ID_RECEITA = ?";
         List<Integer> idIngredienteAntigo = new ArrayList<>();
@@ -120,7 +120,7 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
             PreparedStatement ps = con.prepareStatement(consultaTodos);
             ps.setInt(1, ing.getId_receita());
             ResultSet rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 idIngredienteAntigo.add(rs.getInt("ID_INGREDIENTE"));
             }
         } catch (SQLException e) {
