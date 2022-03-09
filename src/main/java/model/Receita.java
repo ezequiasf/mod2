@@ -3,6 +3,8 @@ package model;
 import utils.TipoReceita;
 import utils.TipoRefeicao;
 
+import java.util.Objects;
+
 public class Receita {
 
     private Integer id_receita;
@@ -14,9 +16,10 @@ public class Receita {
     private Integer tempoPreparo;
     private Double mediaPreco;
     private Double calorias;
-    private Double mediaNota;
+    private Double mediaNota = 0.0;
 
-    public Receita (){}
+    public Receita() {
+    }
 
     public Receita(Integer id_usuario, String nomeReceita, TipoReceita tipoReceita, TipoRefeicao tipoRefeicao, String modoPreparo, Integer tempoPreparo, Double mediaPreco, Double calorias) {
         this.id_usuario = id_usuario;
@@ -118,6 +121,19 @@ public class Receita {
                 ", Tempo =" + tempoPreparo +
                 ", Média de preço =" + mediaPreco +
                 ", Calorias =" + calorias +
-                ", Classificação ="+mediaNota;
+                ", Classificação =" + mediaNota;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Receita)) return false;
+        Receita receita = (Receita) o;
+        return Objects.equals(getId_receita(), receita.getId_receita());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId_receita());
     }
 }

@@ -1,13 +1,11 @@
 package repository;
 
 import model.Receita;
+import model.Usuario;
 import utils.TipoReceita;
 import utils.TipoRefeicao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +40,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
             psmt.setInt(7, receita.getTempoPreparo());
             psmt.setDouble(8, receita.getMediaPreco());
             psmt.setString(9, receita.getTipoRefeicao().getRefeicao());
-            psmt.setDouble(10,receita.getMediaNota());
+            psmt.setDouble(10, receita.getMediaNota());
             psmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,7 +53,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
         String sqlAtualizar = "UPDATE APP_RECEITAS.RECEITA SET NOME_RECEITA = ?, " +
                 "TIPO_RECEITA = ?, CALORIAS = ?, MODO_PREPARO = ?, TEMPO_PREPARO = ?" +
                 ", MEDIA_PRECO = ?, TIPO_REFEICAO = ? WHERE ID_RECEITA = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlAtualizar);
             psmt.setString(1, receita.getNomeReceita());
             psmt.setString(2, receita.getTipoReceita().getTipo());
@@ -66,19 +64,20 @@ public class ReceitaRepository implements GenericRepository<Receita> {
             psmt.setString(7, receita.getTipoRefeicao().getRefeicao());
             psmt.setInt(8, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    //Não deleta caso exista algum ingrediente o referenciando (O mesmo vale para usuário)
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.RECEITA WHERE ID_RECEITA = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlDeletar);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -89,11 +88,11 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 " TIPO_RECEITA, CALORIAS, MEDIA_PRECO, TEMPO_PREPARO" +
                 ",TIPO_REFEICAO, MODO_PREPARO, CLASSIFICACAO FROM APP_RECEITAS.RECEITA WHERE ID_RECEITA = ?";
         Receita receita = new Receita();
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(consultaUm);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 receita.setId_receita(rs.getInt("ID_RECEITA"));
                 receita.setId_usuario(rs.getInt("ID_USUARIO"));
                 receita.setNomeReceita(rs.getString("NOME_RECEITA"));
@@ -101,11 +100,17 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 receita.setCalorias(rs.getDouble("CALORIAS"));
                 receita.setMediaPreco(rs.getDouble("MEDIA_PRECO"));
                 receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-                receita.setTipoRefeicao(TipoRefeicao.valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
+                if (rs.getString("TIPO_REFEICAO").equals("Almoço ou janta")) {
+                    receita.setTipoRefeicao(TipoRefeicao.ALMOCO_JANTA);
+                } else if (rs.getString("TIPO_REFEICAO").equals("Lanche")) {
+                    receita.setTipoRefeicao(TipoRefeicao.LANCHE);
+                } else {
+                    receita.setTipoRefeicao(TipoRefeicao.CAFE);
+                }
                 receita.setModoPreparo(rs.getString("MODO_PREPARO"));
                 receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return receita;
@@ -120,7 +125,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
         try {
             PreparedStatement psmt = con.prepareStatement(consultaTodos);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Receita receita = new Receita();
                 receita.setId_receita(rs.getInt("ID_RECEITA"));
                 receita.setId_usuario(rs.getInt("ID_USUARIO"));
@@ -129,15 +134,39 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 receita.setCalorias(rs.getDouble("CALORIAS"));
                 receita.setMediaPreco(rs.getDouble("MEDIA_PRECO"));
                 receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-                receita.setTipoRefeicao(TipoRefeicao.valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
+                if (rs.getString("TIPO_REFEICAO").equals("Almoço ou janta")) {
+                    receita.setTipoRefeicao(TipoRefeicao.ALMOCO_JANTA);
+                } else if (rs.getString("TIPO_REFEICAO").equals("Lanche")) {
+                    receita.setTipoRefeicao(TipoRefeicao.LANCHE);
+                } else {
+                    receita.setTipoRefeicao(TipoRefeicao.CAFE);
+                }
                 receita.setModoPreparo(rs.getString("MODO_PREPARO"));
                 receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
                 receitas.add(receita);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return receitas;
+    }
+
+    public Receita encontrarPorReferencia(Receita receita) {
+        String consultaTodos = "SELECT ID_RECEITA FROM APP_RECEITAS.RECEITA WHERE NOME_RECEITA = ? " +
+                "AND ID_USUARIO = ?";
+        Receita receitaConsulta = new Receita();
+        try {
+            PreparedStatement ps = con.prepareStatement(consultaTodos);
+            ps.setInt(1, receita.getId_receita());
+            ps.setInt(2, receita.getId_usuario());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                receitaConsulta.setId_receita(rs.getInt("ID_RECEITA"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return receitaConsulta;
     }
 
 }

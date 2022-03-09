@@ -17,20 +17,57 @@ public class BuscaReceita {
             SQLReader.getSQLStatement("scriptsFiltro.sql");
     private final Connection con;
 
-    public BuscaReceita (Connection con){
+    public BuscaReceita(Connection con) {
         this.con = con;
     }
 
-    private List<Object[]> consulta (Object opcao){
+    public List<Object[]> consulta(Integer index, Object... opcoes) {
         List<Object[]> informacoes = new ArrayList<>();
         try {
-            PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(4));
+            PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(index));
+            int contador = 1;
+            for (Object obj : opcoes) {
+                if (obj instanceof String)
+                    pstm.setString(contador, (String) obj);
+                else if (obj instanceof Integer)
+                    pstm.setInt(contador, (Integer) obj);
+                else if (obj instanceof Double)
+                    pstm.setDouble(contador, (Double) obj);
+                else if (obj instanceof  TipoReceita){
+                    TipoReceita tp = (TipoReceita) obj;
+                    pstm.setString(1, tp.getTipo());
+                }else if (obj instanceof  TipoRefeicao){
+                    TipoRefeicao tr = (TipoRefeicao) obj;
+                    pstm.setString(1, tr.getRefeicao());
+                }
+                contador++;
+            }
+            informacoes = constroiLista(pstm);
+
+        } catch(SQLException e){
+                e.printStackTrace();
+            }
+        return informacoes;
+        }
+
+    public List<Object[]> consulta(Object opcao, Integer index) {
+        List<Object[]> informacoes = new ArrayList<>();
+
+        try {
+            PreparedStatement pstm = con.prepareStatement(consultasFiltro.get(index));
             if (opcao instanceof String)
-                pstm.setString(1,(String)opcao);
+                pstm.setString(1, (String) opcao);
             else if (opcao instanceof Integer)
                 pstm.setInt(1, (Integer) opcao);
             else if (opcao instanceof Double)
                 pstm.setDouble(1, (Double) opcao);
+            else if (opcao instanceof  TipoReceita){
+                TipoReceita tp = (TipoReceita) opcao;
+                pstm.setString(1, tp.getTipo());
+            }else if (opcao instanceof  TipoRefeicao){
+                TipoRefeicao tr = (TipoRefeicao) opcao;
+                pstm.setString(1, tr.getRefeicao());
+            }
             informacoes = constroiLista(pstm);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,7 +75,7 @@ public class BuscaReceita {
         return informacoes;
     }
 
-    private List<Object[]> constroiLista (PreparedStatement ps) throws SQLException {
+    private List<Object[]> constroiLista(PreparedStatement ps) throws SQLException {
         List<Object[]> informacoes = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -53,30 +90,21 @@ public class BuscaReceita {
             receita.setCalorias(rs.getDouble("CALORIAS"));
             receita.setMediaPreco(rs.getDouble("MEDIA_PRECO"));
             receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-            receita.setTipoRefeicao(TipoRefeicao
-                    .valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
+            if (rs.getString("TIPO_REFEICAO").equals("Almoço ou janta")) {
+                receita.setTipoRefeicao(TipoRefeicao.ALMOCO_JANTA);
+            } else if (rs.getString("TIPO_REFEICAO").equals("Lanche")) {
+                receita.setTipoRefeicao(TipoRefeicao.LANCHE);
+            } else {
+                receita.setTipoRefeicao(TipoRefeicao.CAFE);
+            }
+            receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
+
             receita.setModoPreparo(rs.getString("MODO_PREPARO"));
             ing.setNome(rs.getString("NOME"));
-            ing.setQuantidade(rs.getString("MODO_PREPARO"));
+            ing.setQuantidade(rs.getString("QUANTIDADE"));
             informacoes.add(new Object[]{receita, ing, us});
         }
         return informacoes;
-    }
-
-    public List<Object[]> filtroUmIngrediente(String ingrediente) {
-        return consulta(ingrediente);
-    }
-
-    public List<Object[]> filtroTipoReceita(TipoReceita tipo) {
-        return consulta(tipo.getTipo());
-    }
-
-    public List<Object[]> filtroLimiteTempo(Integer tempo) {
-        return consulta(tempo);
-    }
-
-    public List<Object[]> filtroLimitePreco(Double preco) {
-        return consulta(preco);
     }
 
     public List<Object[]> listaPrecosCrescente() {
@@ -100,82 +128,4 @@ public class BuscaReceita {
         }
         return informacoes;
     }
-    //TODO: Filtro de nota
-
-//    public static List<Receita> filtroAlmoco(List<Receita> lista, Double calorias) {
-//        return filtroRefeicao(lista, calorias, 0.3, TipoRefeicao.ALMOCO_JANTA,0.15);
-//    }
-//
-//
-//    public static List<Receita> filtroLancheCafe(List<Receita> lista, Double calorias, int tipo) {
-//
-//        if (tipo == 1) {
-//            return filtroRefeicao(lista, calorias, 0.2, TipoRefeicao.CAFE,0.10);
-//        } else if (tipo == -1) {
-//            return filtroRefeicao(lista, calorias, 0.2, TipoRefeicao.LANCHE,0.10);
-//        }
-//        return null;
-//    }
-//
-//    private static List<Receita> filtroRefeicao(List<Receita> lista, Double calorias, Double porcentagem
-//            , TipoRefeicao tipoRefeicao, Double porcentagemDelta) {
-//
-//        return lista.stream().filter(r -> {
-//            if (r.getTipoRefeicao() == tipoRefeicao) {
-//                return (r.getCalorias() > calorias * porcentagemDelta) && (r.getCalorias() <= calorias * porcentagem);
-//            }
-//            return false;
-//        }).collect(Collectors.toList());
-//    }
-//
-//    /**
-//     * Método que escolhe aleatoriamente um tipo de refeição da lista passada.
-//     *
-//     * @param lista    A lista que se deseja captar os tipos de refeição aleatórios.
-//     * @param calorias O total de calorias que a pessoa deve consumir.
-//     * @return Uma lista com 4 receitas com tipos de refeição diferentes.
-//     */
-//    public static List<Receita> cardapioDoDia(List<Receita> lista, Double calorias) {
-//
-//        Random random = new Random();
-//        List<Receita> cafes = filtroLancheCafe(lista, calorias, 1);
-//        Receita cafe = null;
-//        if (!(cafes.size()<=0)){
-//            cafe = cafes.get(random.nextInt(cafes.size()));
-//        }
-//
-//        List<Receita> lanches = filtroLancheCafe(lista, calorias, -1);
-//        Receita lanche = null;
-//        if (!(lanches.size()<=0)){
-//            lanche = lanches.get(random.nextInt(lanches.size()));
-//        }
-//
-//        List<Receita> jantas = filtroAlmoco(lista, calorias);
-//        Receita janta = null;
-//        if (!(jantas.size()<=0)){
-//            janta = jantas.get(random.nextInt(jantas.size()));
-//        }
-//
-//        List<Receita> almocos = filtroAlmoco(lista, calorias);
-//        Receita almoco = null;
-//        if (!(almocos.size()<=0)){
-//           almoco = almocos.get(random.nextInt(almocos.size()));
-//        }
-//        return new ArrayList<>(Arrays.asList(cafe, almoco, lanche, janta));
-//    }
-//
-//    /**
-//     * Calcula a soma de todas as calorias das receitas da lista.
-//     *
-//     * @param receitas A lista de receitas que se deseja calcular.
-//     * @return A soma de todas as calorias.
-//     */
-//    public static Double totalCalorias (List<Receita> receitas){
-//        return receitas.stream().mapToDouble(r-> {
-//            if(r!=null){
-//               return r.getCalorias();
-//            }
-//            return 0.0;
-//        }).sum();
-//    }
 }

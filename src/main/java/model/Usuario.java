@@ -1,4 +1,5 @@
 package model;
+
 import java.time.LocalDate;
 
 public class Usuario {
@@ -9,9 +10,10 @@ public class Usuario {
     private LocalDate nascimento;
     private String email;
 
-    public Usuario (){}
+    public Usuario() {
+    }
 
-    public Usuario(String nomeUsuario, String senha,int anoNasc, int mesNasc, int diaNasc, String email) {
+    public Usuario(String nomeUsuario, String senha, int anoNasc, int mesNasc, int diaNasc, String email) {
         this.nomeUsuario = nomeUsuario;
         this.senha = senha;
         setNascimento(anoNasc, mesNasc, diaNasc);

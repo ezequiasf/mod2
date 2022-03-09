@@ -13,7 +13,7 @@ public class ComentarioRepository implements GenericRepository<Comentario> {
 
     private final Connection con;
 
-    public ComentarioRepository (Connection con){
+    public ComentarioRepository(Connection con) {
         this.con = con;
     }
 
@@ -44,12 +44,12 @@ public class ComentarioRepository implements GenericRepository<Comentario> {
     public void atualizar(Integer id, Comentario comentario) {
         String sqlAtualizar = "UPDATE APP_RECEITAS.COMENTARIO SET COMENTARIO = ?" +
                 " WHERE ID_COMENTARIO = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlAtualizar);
-            psmt.setString(1,comentario.getComentario());
+            psmt.setString(1, comentario.getComentario());
             psmt.setInt(2, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -57,11 +57,11 @@ public class ComentarioRepository implements GenericRepository<Comentario> {
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.COMENTARIO WHERE ID_COMENTARIO = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlDeletar);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -71,17 +71,17 @@ public class ComentarioRepository implements GenericRepository<Comentario> {
         String consultaUm = "SELECT ID_COMENTARIO, ID_RECEITA, ID_USUCOMENT, COMENTARIO" +
                 " FROM APP_RECEITAS.COMENTARIO WHERE ID_COMENTARIO = ?";
         Comentario coment = new Comentario();
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(consultaUm);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 coment.setId_comentario(rs.getInt("ID_COMENTARIO"));
                 coment.setId_receita(rs.getInt("ID_RECEITA"));
                 coment.setId_comentario(rs.getInt("ID_USUCOMENT"));
                 coment.setComentario(rs.getString("COMENTARIO"));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return coment;
@@ -95,7 +95,7 @@ public class ComentarioRepository implements GenericRepository<Comentario> {
         try {
             PreparedStatement psmt = con.prepareStatement(consultaTodos);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Comentario coment = new Comentario();
                 coment.setId_comentario(rs.getInt("ID_COMENTARIO"));
                 coment.setId_receita(rs.getInt("ID_RECEITA"));
@@ -103,7 +103,7 @@ public class ComentarioRepository implements GenericRepository<Comentario> {
                 coment.setComentario(rs.getString("COMENTARIO"));
                 comentarios.add(coment);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return comentarios;

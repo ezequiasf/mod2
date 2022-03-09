@@ -1,9 +1,5 @@
 package utils;
 
-/**
- * Esta classe implementa a lógica da fórmula mais básica
- * provida pela OMS, a partir de estudos de 2004.
- */
 public class CalculoEnergetico implements Calculo {
     @Override
     public Double calculoGastoEnergetico(Double altura, Double peso, String sexo
