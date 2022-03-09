@@ -71,6 +71,7 @@ public class ReceitaRepository implements GenericRepository<Receita> {
         }
     }
 
+    //TODO: Questão da constraint
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.RECEITA WHERE ID_RECEITA = ?";
@@ -101,7 +102,13 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 receita.setCalorias(rs.getDouble("CALORIAS"));
                 receita.setMediaPreco(rs.getDouble("MEDIA_PRECO"));
                 receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-                receita.setTipoRefeicao(TipoRefeicao.valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
+                if (rs.getString("TIPO_REFEICAO").equals("Almoço ou janta")) {
+                    receita.setTipoRefeicao(TipoRefeicao.ALMOCO_JANTA);
+                } else if (rs.getString("TIPO_REFEICAO").equals("Lanche")) {
+                    receita.setTipoRefeicao(TipoRefeicao.LANCHE);
+                } else {
+                    receita.setTipoRefeicao(TipoRefeicao.CAFE);
+                }
                 receita.setModoPreparo(rs.getString("MODO_PREPARO"));
                 receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
             }
@@ -129,7 +136,13 @@ public class ReceitaRepository implements GenericRepository<Receita> {
                 receita.setCalorias(rs.getDouble("CALORIAS"));
                 receita.setMediaPreco(rs.getDouble("MEDIA_PRECO"));
                 receita.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-                receita.setTipoRefeicao(TipoRefeicao.valueOf(rs.getString("TIPO_REFEICAO").toUpperCase()));
+                if (rs.getString("TIPO_REFEICAO").equals("Almoço ou janta")) {
+                    receita.setTipoRefeicao(TipoRefeicao.ALMOCO_JANTA);
+                } else if (rs.getString("TIPO_REFEICAO").equals("Lanche")) {
+                    receita.setTipoRefeicao(TipoRefeicao.LANCHE);
+                } else {
+                    receita.setTipoRefeicao(TipoRefeicao.CAFE);
+                }
                 receita.setModoPreparo(rs.getString("MODO_PREPARO"));
                 receita.setMediaNota(rs.getDouble("CLASSIFICACAO"));
                 receitas.add(receita);

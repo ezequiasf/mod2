@@ -13,8 +13,8 @@ public class UsuarioService {
         this.usuRepo = usuRepo;
     }
 
-    public void adicionarUsuario (Usuario usuario){
-        usuRepo.registrar(usuario);
+    public Usuario adicionarUsuario (Usuario usuario){
+        return usuRepo.registrar(usuario);
     }
 
     public void atualizarUsuario (Integer id, Usuario usuario){

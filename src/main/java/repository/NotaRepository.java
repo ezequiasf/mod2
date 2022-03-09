@@ -18,7 +18,7 @@ public class NotaRepository implements GenericRepository<Nota> {
     @Override
     public Nota registrar(Nota nota) {
         String sqlInsert = "INSERT INTO APP_RECEITAS.NOTA (ID_NOTA, ID_RECEITA, ID_USUNOTA" +
-                ", NOTA) VALUES (?,?,?,?)";
+                ", CLASSIFICACAO) VALUES (?,?,?,?)";
         String sqlIdConsult = "SELECT APP_RECEITAS.SEQ_NOTA.nextval id_nota FROM DUAL";
         try {
             PreparedStatement psmt = con.prepareStatement(sqlIdConsult);
@@ -40,7 +40,7 @@ public class NotaRepository implements GenericRepository<Nota> {
 
     @Override
     public void atualizar(Integer id, Nota nota) {
-        String sqlAtualizar = "UPDATE APP_RECEITAS.NOTA SET NOTA = ?" +
+        String sqlAtualizar = "UPDATE APP_RECEITAS.NOTA SET CLASSIFICACAO = ?" +
                 " WHERE ID_NOTA = ?";
         try  {
             PreparedStatement psmt = con.prepareStatement(sqlAtualizar);
@@ -67,7 +67,7 @@ public class NotaRepository implements GenericRepository<Nota> {
     @Override
     public Nota encontrarUm(Integer id) {
         String consultaUm = "SELECT ID_NOTA, ID_RECEITA, ID_USUNOTA," +
-                " NOTA FROM APP_RECEITAS.USUARIO WHERE ID_NOTA = ?";
+                " CLASSIFICACAO FROM APP_RECEITAS.NOTA WHERE ID_NOTA = ?";
         Nota nota = new Nota();
         try  {
             PreparedStatement psmt = con.prepareStatement(consultaUm);
@@ -77,7 +77,7 @@ public class NotaRepository implements GenericRepository<Nota> {
                 nota.setId_nota(rs.getInt("ID_NOTA"));
                 nota.setId_receita(rs.getInt("ID_RECEITA"));
                 nota.setId_usuario(rs.getInt("ID_USUNOTA"));
-                nota.setNota(rs.getDouble("NOTA"));
+                nota.setNota(rs.getDouble("CLASSIFICACAO"));
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -88,7 +88,7 @@ public class NotaRepository implements GenericRepository<Nota> {
     @Override
     public List<Nota> encontrarTodos() {
         String consultaTodos = "SELECT ID_NOTA, ID_RECEITA, ID_USUNOTA," +
-                " NOTA FROM APP_RECEITAS.NOTA";
+                " CLASSIFICACAO FROM APP_RECEITAS.NOTA";
         List<Nota> notas = new ArrayList<>();
 
         try {
@@ -99,7 +99,7 @@ public class NotaRepository implements GenericRepository<Nota> {
                 nota.setId_nota(rs.getInt("ID_NOTA"));
                 nota.setId_receita(rs.getInt("ID_RECEITA"));
                 nota.setId_usuario(rs.getInt("ID_USUNOTA"));
-                nota.setNota(rs.getDouble("NOTA"));
+                nota.setNota(rs.getDouble("CLASSIFICACAO"));
                 notas.add(nota);
             }
         }catch (SQLException e){

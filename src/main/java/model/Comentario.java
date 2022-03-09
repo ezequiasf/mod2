@@ -50,6 +50,5 @@ public class Comentario {
     @Override
     public String toString() {
         return "comentario=" + comentario ;
-
     }
 }

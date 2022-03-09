@@ -14,7 +14,7 @@ public class Receita {
     private Integer tempoPreparo;
     private Double mediaPreco;
     private Double calorias;
-    private Double mediaNota;
+    private Double mediaNota = 0.0;
 
     public Receita (){}
 

@@ -57,6 +57,7 @@ public class UsuarioRepository implements GenericRepository<Usuario> {
         }
     }
 
+    //TODO: java.sql.SQLIntegrityConstraintViolationException: ORA-02292: restrição de integridade
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.USUARIO WHERE ID_USUARIO = ?";

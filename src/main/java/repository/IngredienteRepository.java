@@ -46,13 +46,13 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
     public void atualizar(Integer id, Ingrediente ingrediente) {
         String sqlAtualizar = "UPDATE APP_RECEITAS.INGREDIENTE SET NOME = ? , " +
                 "QUANTIDADE = ? WHERE ID_INGREDIENTE = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlAtualizar);
-            psmt.setString(1,ingrediente.getNome());
-            psmt.setString(2,ingrediente.getQuantidade());
+            psmt.setString(1, ingrediente.getNome());
+            psmt.setString(2, ingrediente.getQuantidade());
             psmt.setInt(3, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -60,11 +60,11 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
     @Override
     public void deletar(Integer id) {
         String sqlDeletar = "DELETE FROM APP_RECEITAS.INGREDIENTE WHERE ID_INGREDIENTE = ?";
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(sqlDeletar);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             psmt.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -74,17 +74,17 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
         String consultaUm = "SELECT ID_INGREDIENTE, ID_RECEITA, NOME," +
                 " QUANTIDADE FROM APP_RECEITAS.INGREDIENTE WHERE ID_INGREDIENTE = ?";
         Ingrediente ing = new Ingrediente();
-        try  {
+        try {
             PreparedStatement psmt = con.prepareStatement(consultaUm);
-            psmt.setInt(1,id);
+            psmt.setInt(1, id);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 ing.setId_ingrediente(rs.getInt("ID_INGREDIENTE"));
                 ing.setId_receita(rs.getInt("ID_RECEITA"));
                 ing.setNome(rs.getString("NOME"));
                 ing.setQuantidade(rs.getString("QUANTIDADE"));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return ing;
@@ -99,7 +99,7 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
         try {
             PreparedStatement psmt = con.prepareStatement(consultaTodos);
             ResultSet rs = psmt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Ingrediente ing = new Ingrediente();
                 ing.setId_ingrediente(rs.getInt("ID_INGREDIENTE"));
                 ing.setId_receita(rs.getInt("ID_RECEITA"));
@@ -107,7 +107,7 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
                 ing.setQuantidade(rs.getString("QUANTIDADE"));
                 ingredientes.add(ing);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return ingredientes;
