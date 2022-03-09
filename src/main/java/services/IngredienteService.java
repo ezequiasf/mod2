@@ -1,6 +1,7 @@
 package services;
 
 import model.Ingrediente;
+import model.Usuario;
 import repository.IngredienteRepository;
 
 import java.util.List;
@@ -28,5 +29,9 @@ public class IngredienteService {
     public void listarIngredientes (){
         List<Ingrediente> ingredientes = ingRepo.encontrarTodos();
         ingredientes.forEach(System.out::println);
+    }
+
+    public List<Integer> encontrarPorReferencia (Ingrediente ing){
+        return ingRepo.encontrarPorReferencia(ing);
     }
 }

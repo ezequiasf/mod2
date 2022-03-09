@@ -1,11 +1,9 @@
 package repository;
 
 import model.Ingrediente;
+import model.Usuario;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,5 +109,23 @@ public class IngredienteRepository implements GenericRepository<Ingrediente> {
             e.printStackTrace();
         }
         return ingredientes;
+    }
+
+    public List<Integer> encontrarPorReferencia (Ingrediente ing){
+        String consultaTodos = "SELECT ID_INGREDIENTE " +
+                " FROM APP_RECEITAS.INGREDIENTE WHERE ID_RECEITA = ?";
+        List<Integer> idIngredienteAntigo = new ArrayList<>();
+        Ingrediente ingConsulta = new Ingrediente();
+        try {
+            PreparedStatement ps = con.prepareStatement(consultaTodos);
+            ps.setInt(1, ing.getId_receita());
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                idIngredienteAntigo.add(rs.getInt("ID_INGREDIENTE"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return idIngredienteAntigo;
     }
 }

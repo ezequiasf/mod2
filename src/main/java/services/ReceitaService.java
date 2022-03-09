@@ -1,6 +1,7 @@
 package services;
 
 import model.Receita;
+import model.Usuario;
 import repository.ReceitaRepository;
 
 import java.util.List;
@@ -28,5 +29,9 @@ public class ReceitaService {
     public void listarReceitas (){
         List<Receita> receitas = receitaRepo.encontrarTodos();
         receitas.forEach(System.out::println);
+    }
+
+    public Receita encontrarPorReferencia (Receita receita){
+        return receitaRepo.encontrarPorReferencia(receita);
     }
 }

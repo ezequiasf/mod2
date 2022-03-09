@@ -297,7 +297,19 @@ public class Tela {
         usuarioSvc.adicionarUsuario(usuario);
     }
 
-    public static Receita viewCadastroReceita (Usuario usuario){
+    public static void viewCadastroReceita (Usuario usuario){
+        List<Object> info  = viewAtualizaECadastraReceita(usuario);
+        Receita receita = (Receita) info.get(0);
+        List<Ingrediente> listaIngredientes = (List<Ingrediente>) info.get(1);
+
+        Receita receitaComId = receitaSvc.adicionarReceita(receita);
+        listaIngredientes.forEach(ing ->{
+            ing.setId_receita(receitaComId.getId_receita());
+            ingSvc.adicionarIngrediente(ing);
+        });
+    }
+
+    public static List<Object> viewAtualizaECadastraReceita (Usuario usuario){
         System.out.println("Qual é o nome da receita?");
         String nomeReceita = scanner.nextLine();
 
@@ -323,17 +335,17 @@ public class Tela {
         tempoReceita = scanner.nextInt();
         scanner.nextLine(); //Flush
 
-    System.out.println("Agora vamos aos ingredientes: Digite no seguinte formato:\n" +
-            "nomeIngrediente1,quantidade medida/nomeIngrediente2,quantidade medida/...");
-    String ingredientesJuntos = scanner.nextLine();
-    List<Ingrediente> listaIngredientes = new ArrayList<>();
-    String[] primeiraSeparacao = ingredientesJuntos.replace(" ", "").split("/");
-    for (String str : primeiraSeparacao) {
-        Ingrediente ing = new Ingrediente();
-        ing.setNome(str.split(",")[0]);
-        ing.setQuantidade(str.split(",")[1]);
-        listaIngredientes.add(ing);
-    }
+        System.out.println("Agora vamos aos ingredientes: Digite no seguinte formato:\n" +
+                "nomeIngrediente1,quantidade medida/nomeIngrediente2,quantidade medida/...");
+        String ingredientesJuntos = scanner.nextLine();
+        List<Ingrediente> listaIngredientes = new ArrayList<>();
+        String[] primeiraSeparacao = ingredientesJuntos.replace(" ", "").split("/");
+        for (String str : primeiraSeparacao) {
+            Ingrediente ing = new Ingrediente();
+            ing.setNome(str.split(",")[0]);
+            ing.setQuantidade(str.split(",")[1]);
+            listaIngredientes.add(ing);
+        }
 
         System.out.println("Quantas calorias tem em média essa refeição?");
         double qtdCalorias = scanner.nextDouble();
@@ -365,24 +377,41 @@ public class Tela {
         receita.setNomeReceita(nomeReceita);
         receita.setCalorias(qtdCalorias);
         receita.setMediaPreco(mediaPreco);
-        Receita receitaComId = receitaSvc.adicionarReceita(receita);
-        listaIngredientes.forEach(ing ->{
-            ing.setId_receita(receitaComId.getId_receita());
-            ingSvc.adicionarIngrediente(ing);
-        });
-        return receita;
+        List<Object> info = new ArrayList<>();
+        info.add(receita);
+        info.add(listaIngredientes);
+        return info;
     }
 
     public static void viewAtualizarReceita (Usuario usuario){
-        int resposta = viewPersonalizadaId(usuario);
-        Receita receita = viewCadastroReceita(usuario);
-        receitaSvc.atualizarReceita(resposta, receita);
+        int idAntigoReceita = viewPersonalizadaId(usuario);
+        List<Object> info = viewAtualizaECadastraReceita(usuario);
+        Receita novoR = (Receita) info.get(0);
+        List<Ingrediente> novosIngs = (List<Ingrediente>) info.get(1);
+        Ingrediente ingAntigo = new Ingrediente();
+        ingAntigo.setId_receita(idAntigoReceita);
+
+        List<Integer> idsIngAntigos = ingSvc.encontrarPorReferencia(ingAntigo);
+        receitaSvc.atualizarReceita(idAntigoReceita, novoR);
+
+        novosIngs.forEach(ing ->{
+            ing.setId_receita(idAntigoReceita);
+            ingSvc.adicionarIngrediente(ing);
+        });
+        idsIngAntigos.forEach(id-> ingSvc.removerIngrediente(id));
         System.out.println("Receita atualizada com sucesso.");
     }
 
     public static void viewDeletarReceitas (Usuario usuario){
-        int resposta = viewPersonalizadaId(usuario);
-        receitaSvc.removerReceita(resposta);
+        int idReceitaAntiga = viewPersonalizadaId(usuario);
+
+        Ingrediente ingAntigo = new Ingrediente();
+        ingAntigo.setId_receita(idReceitaAntiga);
+
+        List<Integer> idsAntigosIngredientes = ingSvc.encontrarPorReferencia(ingAntigo);
+        idsAntigosIngredientes.forEach( id -> ingSvc.removerIngrediente(id));
+
+        receitaSvc.removerReceita(idReceitaAntiga);
         System.out.println("Receita deletada com sucesso.");
     }
 

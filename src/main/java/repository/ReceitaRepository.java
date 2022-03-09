@@ -1,13 +1,11 @@
 package repository;
 
 import model.Receita;
+import model.Usuario;
 import utils.TipoReceita;
 import utils.TipoRefeicao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,6 +149,24 @@ public class ReceitaRepository implements GenericRepository<Receita> {
             e.printStackTrace();
         }
         return receitas;
+    }
+
+    public Receita encontrarPorReferencia (Receita receita){
+        String consultaTodos = "SELECT ID_RECEITA FROM APP_RECEITAS.RECEITA WHERE NOME_RECEITA = ? "+
+                "AND ID_USUARIO = ?";
+        Receita receitaConsulta = new Receita();
+        try {
+            PreparedStatement ps = con.prepareStatement(consultaTodos);
+            ps.setInt(1, receita.getId_receita());
+            ps.setInt(2, receita.getId_usuario());
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                receitaConsulta.setId_receita(rs.getInt("ID_RECEITA"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return receitaConsulta;
     }
 
 }
