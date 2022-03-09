@@ -1,20 +1,18 @@
 package view;
 
-import model.Ingrediente;
-import model.Receita;
-import model.Usuario;
+import model.*;
 import services.*;
-import utils.BuildService;
-import utils.TipoReceita;
-import utils.TipoRefeicao;
+import utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Tela {
 
     private final static Scanner scanner = new Scanner(System.in);
+    private final static BuscaReceita busca = new BuscaReceita(BuildService.getConnection());
     private final static ReceitaService receitaSvc = BuildService.buildReceitaService();
     private final static UsuarioService usuarioSvc = BuildService.buildUsuarioService();
     private final static NotaService notaSvc = BuildService.buildNotaService();
@@ -49,11 +47,11 @@ public class Tela {
 
         do {
             switch (opcoesCadastrado()) {
-                case 1 -> viewListaTodasReceitasCadastrado();
+                case 1 -> viewListaTodasReceitasCadastrado(usuario);
                 case 2 -> viewCadastroReceita(usuario);
-                case 3 -> viewAtualizarReceita();
-                case 4 -> viewDeletarReceitas();
-                case 5 -> viewMinhasReceitas();
+                case 3 -> viewAtualizarReceita(usuario);
+                case 4 -> viewDeletarReceitas(usuario);
+                case 5 -> viewMinhasReceitas(usuario);
                 case 6 -> viewFiltros();
                 case 7 -> viewTuaSaude();
                 case 8 -> {
@@ -110,7 +108,7 @@ public class Tela {
         receitaSvc.listarReceitas();
     }
 
-    public static void viewListaTodasReceitasCadastrado (){
+    public static void viewListaTodasReceitasCadastrado (Usuario usuario){
         receitaSvc.listarReceitas();
         System.out.println("""
                 Deseja comentar ou dar uma nota a alguma receita?
@@ -121,7 +119,26 @@ public class Tela {
         int resposta = scanner.nextInt();
         scanner.nextLine();//Flush
         if (resposta == 1){
-            viewPersonalizadaId();
+            int idReceita = viewPersonalizadaId(usuario);
+            System.out.println("Adicione o comentário:");
+            String comentario = scanner.nextLine();
+            Comentario coment = new Comentario();
+            coment.setId_receita(idReceita);
+            coment.setId_usuario(usuario.getId());
+            coment.setComentario(comentario);
+            comentSvc.adicionarComentario(coment);
+            System.out.println("Comentário adicionado.");
+        }
+        else if (resposta ==2){
+            int idReceita = viewPersonalizadaId(usuario);
+            System.out.println("Dê uma nota de 0 a 5:");
+            double nota = scanner.nextDouble();
+            Nota notaObj = new Nota();
+            notaObj.setId_receita(idReceita);
+            notaObj.setId_usuario(usuario.getId());
+            notaObj.setNota(nota);
+            notaSvc.adicionarNota(notaObj);
+            System.out.println("Nota adicionada.");
         }
     }
 
@@ -145,11 +162,115 @@ public class Tela {
     }
 
     public static void viewFiltros (){
+        List<Object[]> receitas;
+        System.out.print("""
+                Como você gostaria de pesquisar as receitas?
+                [1] - Ingredientes
+                [2] - Tempo de preparo
+                [3] - Preço
+                [4] - Tipo de receita
+                """);
+        int resposta = scanner.nextInt();
+        scanner.nextLine(); //Flush
 
+        switch (resposta) {
+            case 1 -> {
+                System.out.println("Digite o ingrediente que você tem:");
+                String ingrediente = scanner.nextLine();
+                receitas = busca.consulta(ingrediente, 4);
+                apresentador(receitas);
+            }
+            case 2 -> {
+                System.out.println("Quanto tempo você tem para preparar a receita? (Em minutos)");
+                int tempoReceita = scanner.nextInt();
+                receitas = busca.consulta(tempoReceita, 3);
+                apresentador(receitas);
+            }
+            case 3 -> {
+                System.out.println("Escolha uma forma de filtro > [1] - Limite de preço |" +
+                        " [2] - Da receita barata para mais cara | [3] - Da cara para mais barata");
+                switch (scanner.nextInt()) {
+                    case 1 -> {
+                        System.out.println("Até quanto você pode gastar?");
+                        double valor = scanner.nextDouble();
+                        receitas = busca.consulta(valor, 0);
+                        apresentador(receitas);
+                    }
+                    case 2 -> apresentador(busca.listaPrecosCrescente());
+                    case 3 -> apresentador(busca.listaPrecosDecrescente());
+                }
+            }
+            case 4 -> {
+                System.out.println("Em qual opção sua receita se encaixa melhor?\n [DIET] | " +
+                        "[VEGANA] | [VEGETARIANA] | [SALGADA] | [DOCE] | [SEM_GLUTEN] |" +
+                        " [ZERO_LACTOSE]");
+                apresentador(busca.consulta(TipoReceita.valueOf(scanner.nextLine().replace(" ", "")
+                        .toUpperCase()),6));
+            }
+        }
+        if ((resposta <= 4) && (resposta > 0)) {
+            System.out.println("Aqui estão as opções filtradas! ;)");
+        }
     }
 
     public static void viewTuaSaude (){
+        System.out.println("A partir desta funcionalidade,você poderá escolher uma dieta adequada" +
+                " as suas necessidades :)");
+        System.out.println("Vamos as informações necessárias:");
 
+        System.out.println("Qual é o seu sexo? [M] | [F]");
+        String sexo = scanner.nextLine();
+
+        System.out.println("Qual é a sua idade?");
+        int idade = scanner.nextInt();
+
+        System.out.println("Agora digite o seu peso:");
+        double peso = scanner.nextDouble();
+
+        System.out.println("ok, informe sua altura:");
+        double altura = scanner.nextDouble();
+
+        System.out.println("Você costuma fazer atividades físicas? 1 - [Sim] / 2 - [Não]");
+        int respostaAtvFisica = scanner.nextInt();
+        scanner.nextLine(); //Flush
+        double calorias;
+        if (respostaAtvFisica == 1) {
+            System.out.println("Como costuma ser a ocorrência das atividades?  [LEVE] | " +
+                    "[MODERADA] |  [INTENSO]");
+            String ocorrenciaAtividades = scanner.nextLine();
+            CalculoEnergeticoAtividade calculoEnergeticoAtv = new CalculoEnergeticoAtividade(ocorrenciaAtividades);
+            calorias = calculoEnergeticoAtv.calculoGastoEnergetico(altura, peso, sexo, idade);
+        } else {
+            CalculoEnergetico calculoEnergetico = new CalculoEnergetico();
+            calorias = calculoEnergetico.calculoGastoEnergetico(altura, peso, sexo, idade);
+        }
+        System.out.println("Você deseja visualizar uma lista ou um " +
+                "cardápio do dia personalizado? 1 - Lista / 2 - Cardápio do dia");
+        int respostaCardapio = scanner.nextInt();
+       if (respostaCardapio == 1) {
+            System.out.println("===================== Opções de Café =======================");
+            apresentador(busca.consulta(TipoRefeicao.CAFE, 7));
+            System.out.println("===================== Opções de Refeição (Almoço e Janta) =======================");
+            apresentador(busca.consulta(TipoRefeicao.ALMOCO_JANTA, 7));
+            System.out.println("===================== Opções de Lanche =======================");
+           apresentador(busca.consulta(TipoRefeicao.LANCHE, 7));
+        } else {
+           Random rd = new Random();
+           System.out.println("================ Cardápio do dia ======================");
+
+            System.out.println("********* Café da manha *********");
+            apresentaAleatorio(busca.consulta(5,TipoRefeicao.CAFE, 0.1*calorias, 0.2*calorias));
+
+            System.out.println("********* Almoço *********");
+            apresentaAleatorio(busca.consulta(5,TipoRefeicao.ALMOCO_JANTA,
+                    0.15*calorias, 0.3*calorias));
+
+            System.out.println("********* Lanche *********");
+            apresentaAleatorio(busca.consulta(5,TipoRefeicao.LANCHE, 0.1*calorias, 0.2*calorias));
+
+            System.out.println("********* Janta *********");
+            apresentaAleatorio(busca.consulta(5,TipoRefeicao.ALMOCO_JANTA, 0.15*calorias, 0.3*calorias));
+        }
     }
 
     public static void viewCadastroPlataforma (){
@@ -161,9 +282,9 @@ public class Tela {
 
         System.out.println("Data de nascimento: ano/mes/dia");
         String data = scanner.nextLine();
-        Integer ano = Integer.valueOf(data.split("/")[0]);
-        Integer mes = Integer.valueOf(data.split("/")[1]);
-        Integer dia = Integer.valueOf(data.split("/")[2]);
+        int ano = Integer.parseInt(data.split("/")[0]);
+        int mes = Integer.parseInt(data.split("/")[1]);
+        int dia = Integer.parseInt(data.split("/")[2]);
 
         System.out.println("Email:");
         String email = scanner.nextLine();
@@ -176,7 +297,7 @@ public class Tela {
         usuarioSvc.adicionarUsuario(usuario);
     }
 
-    public static void viewCadastroReceita (Usuario usuario){
+    public static Receita viewCadastroReceita (Usuario usuario){
         System.out.println("Qual é o nome da receita?");
         String nomeReceita = scanner.nextLine();
 
@@ -249,23 +370,52 @@ public class Tela {
             ing.setId_receita(receitaComId.getId_receita());
             ingSvc.adicionarIngrediente(ing);
         });
+        return receita;
     }
 
-    public static void viewAtualizarReceita (){
-
+    public static void viewAtualizarReceita (Usuario usuario){
+        int resposta = viewPersonalizadaId(usuario);
+        Receita receita = viewCadastroReceita(usuario);
+        receitaSvc.atualizarReceita(resposta, receita);
+        System.out.println("Receita atualizada com sucesso.");
     }
 
-    public static void viewDeletarReceitas (){
-
+    public static void viewDeletarReceitas (Usuario usuario){
+        int resposta = viewPersonalizadaId(usuario);
+        receitaSvc.removerReceita(resposta);
+        System.out.println("Receita deletada com sucesso.");
     }
 
-    public static int viewPersonalizadaId (){
-        return 2;
+    public static int viewPersonalizadaId (Usuario usuario){
+        System.out.println("Informe o id da receita:");
+        busca.consulta(usuario.getId(), 10);
+        int resposta = scanner.nextInt();
+        scanner.nextLine(); //flush
+        return resposta;
     }
 
-    public static void viewMinhasReceitas (){
+    public static void viewMinhasReceitas (Usuario usuario){
         System.out.println("Aqui estão suas receitas cadastradas:");
-
+        apresentador(busca.consulta(usuario.getId(), 9));
     }
+
+    public static void apresentador (List<Object[]> lista){
+        lista.forEach(arr -> {
+            System.out.println(arr[0]);
+            System.out.println(arr[1]);
+            Usuario usuario = (Usuario) arr[2];
+            System.out.println("Usuário: "+usuario.getUsuario());
+        });
+    }
+
+    public static void apresentaAleatorio (List<Object[]> lista){
+        Random rd = new Random();
+        if (lista.size()>0){
+            List<Object[]> refeicaoEscolhida = new ArrayList<>();
+            refeicaoEscolhida.add(lista.get(rd.nextInt(lista.size())));
+            apresentador(refeicaoEscolhida);
+        }
+    }
+
 
 }

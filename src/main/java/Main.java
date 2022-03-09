@@ -23,6 +23,7 @@ public class Main {
 //        }
 
         BuscaReceita br = new BuscaReceita(con);
+        br.consulta(4,"ovo").forEach(arr-> System.out.println(arr[0]));
 //        br.filtroUmIngrediente("OVO",4).forEach(Arr -> {
 //            System.out.println(Arr[0]);
 //            System.out.println(Arr[1]);
@@ -43,13 +44,13 @@ public class Main {
 //        br.listaPrecosCrescente().forEach(Arr -> System.out.println(Arr[0]));
 //        br.listaPrecosDecrescente().forEach(Arr -> System.out.println(Arr[0]));
 
-        br.filtroCalorias(5, 700, 5000).forEach(Arr -> System.out.println(Arr[0]));
-
-
-//        System.out.println(br.filtroCalorias(5, 100, 2000));
-
-        UsuarioRepository usr = new UsuarioRepository(con);
-        UsuarioService us = new UsuarioService(usr);
+//        br.filtroCalorias(5, 700, 5000).forEach(Arr -> System.out.println(Arr[0]));
+//
+//
+////        System.out.println(br.filtroCalorias(5, 100, 2000));
+//
+//        UsuarioRepository usr = new UsuarioRepository(con);
+//        UsuarioService us = new UsuarioService(usr);
 
 ////        Connection con = null;
 ////        con = ConfigAmbienteJDBC.getConnection();

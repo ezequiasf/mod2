@@ -35,4 +35,8 @@ public class BuildService {
         return new IngredienteService(repo);
     }
 
+    public static Connection getConnection (){
+        return con;
+    }
+
 }
